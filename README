@@ -1,0 +1,245 @@
+dana_ad
+keren15
+
+=============================
+=      File description     =
+=============================
+
+oop (Package)
+  ex6 (Package)
+    main (Package)
+
+    Sjavac.java (Main class) - This class is the main class which operates the program from end to end.
+
+    MainExceptions (Package) - This package consists all exception super-classes of this program.
+        CommentException.java - This is an exception class which all exceptions related to comment lines
+        extends.
+        ConditionException.java - This is an exception class which all exceptions related to condition lines
+        extends.
+        MethodException.java - This is an exception class which all exceptions related to method lines
+        extends.
+        ScopeException.java - This is an exception class which all exceptions related to scope lines
+        extends.
+        TypeException.java - This is an exception class which all exceptions related to type lines
+        extends.
+        VariableException.java - This is an exception class which all exceptions related to variable lines
+        extends.
+
+    Methods (Package) - This package consists all method related classes - the object Method, and its
+    exceptions.
+        Method.java - A class represents an object of type Method.
+        IllegalMethodNameException.java - A specific exception class, inherits from MethodException.
+        IllegalMethodParamsException.java - A specific exception class, inherits from MethodException.
+        IllegalMethodStructureException.java - A specific exception class, inherits from MethodException.
+        NoFunctionBracketsException.java - A specific exception class, inherits from MethodException.
+        NotExistingMethodException.java - A specific exception class, inherits from MethodException.
+
+    Reader (Package) - This package consists all the readers of each type of line, and its possible
+    exceptions.
+        AssignmentReader.java - This class represents a variable assignment lines reader.
+        CommentsReader.java - This class represents a comment lines reader.
+        ConditionsReader.java - This class represents a condition lines reader.
+        DeclarationReader.java - This class represents a variable declaration lines reader.
+        InValidCommentLineException.java - A specific exception class, inherits from CommentException.
+        InvalidLineException.java - A specific exception class, inherits from ScopeException.
+        MethodCallReader.java - This class represents a method call lines reader.
+        MethodReader.java - This class represents a method declarations and lines reader.
+        ReadLines.java - This class is the main reader class of all the lines,
+        it is operating the rest of the readers, it calls the right one.
+        ScopeReader.java - This class is secondary to ReadLines class, represents a ScopesReader, it scans the
+        inner lines of methods and conditions, then send it to the rest of the readers.
+        VariablesReader.java - This interface is implemented by AssignmentReader and DeclarationReader,
+        it was built to avoid code repetition.
+
+    Scope (Package) - This package consists all scope related classes - the object Scope, and its exceptions.
+        Scope - A class represents an object of type Scope.
+        EmptyConditionException.java - A specific exception class, inherits from ScopeException.
+        IllegalConditionException.java - A specific exception class, inherits from ScopeException.
+        IllegalConditionStructureException.java - A specific exception class, inherits from ScopeException.
+        IllegalReturnStatementException.java - A specific exception class, inherits from ScopeException.
+
+    Types (Package) - This package consists all type related classes - the abstract object Type, its children
+    and
+     and its exceptions.
+       Type.java - A super-abstract-class represents an object of type Type.
+       BooleanType.java - This sub-class inherits from Type, and represents Boolean type.
+       CharType.java - This sub-class inherits from Type, and represents Char type.
+       DoubleType.java - This sub-class inherits from Type, and represents Double type.
+       IntType.java - This sub-class inherits from Type, and represents Int type.
+       StringType.java - This sub-class inherits from Type, and represents String type.
+       ValueDoesNotMatchTypeException.java - A specific exception class, inherits from TypeException.
+
+    Variables (Package) - This package consists all variables related classes - the object variable, its
+    factory and
+    its exceptions.
+        Variable.java - A class represents an object of type Variable.
+        VariablesFactory.java - This class represents the variables factory.
+        FinalVariableWasNotAssigned.java - A specific exception class, inherits from VariableException.
+        IllegalVariableDeclarationException.java - A specific exception class, inherits from
+        VariableException.
+        IllegalVariableNameException.java - A specific exception class, inherits from VariableException.
+        VariableIllegalAssignmentException.java - A specific exception class, inherits from
+        VariableException.
+        VariableNameAlreadyAssignedException.java - A specific exception class, inherits from
+        VariableException.
+
+
+=============================
+=          Design           =
+=============================
+    We chose to use packages in our design, in order to create the structure we imagined for each one of the
+    readers. Our main class is javaC, which operates a primal scan - which scans the global scope and the
+    methods signatures, and the main scan which checks all the content in the local scopes - methods or
+    conditions.
+
+    • Inheritance and Composition
+    In order to do that, we chose to use inheritance and composition when dealing with variables and types.
+    We created a Type object which holds the type of the variable, the name of it and the value - if valid of
+    course, the Type object is created inside the Variable factory, which is a factory which builds variable
+    objects according to two constructor, the first one is without the Type object, and the second one, which
+    is created in the factory,already holds the Type object (composition) as data member. This way, it will
+    be easier to expand our program if other types will be added afterwards.
+    We also used inheritance in the Exceptions part. We created inheritance tree of Exceptions, with 6 main
+    super-classes: CommentException, ConditionException, MethodException, ScopeException,
+    TypeException and VariableException. Each of them has sub-classes which give specific exceptions to common
+    type of errors that can be found in the given code.
+    The inheritance lets us avoid a lot of code repetition, and defines a 'is-a' relationship.
+    The composition takes place when we used a lot of our objects as data members of other object, for example:
+    Scope, Method, Variable etc.
+
+    • Factory Design Pattern
+    The VariablesFactory which was explained in the last paragraph,
+    uses the Factory design pattern supports the single choice principle.
+
+    • Readers as Static Classes
+    We used static classes a lot, to represent Readers: Assignment Reader, Method Reader, Comment Reader etc.
+    We chose to use static class because there's no need to create any instance of a reader, it is a general
+    class,which we wanted to get access to from several other static classes.
+    The main reader - ReadLines, is an object, unlike the other readers. We chose to do it, to make sure the
+    scan for each file is separate and not static, we did that by creating an new instance of the ReadLines,
+    in each file scan.
+    Furthermore, we used have one interface - VariablesReader which allows us to avoid code repetition.
+    This interface is implemented by Assignment Reader and Declaration Reader.
+
+=============================
+=  Implementation details   =
+=============================
+     • Static Classes
+     as explained before, in the design part, we chose to implement a lot of our code with static methods,
+     which helped us to access methods without creating or sending an instance of a class every time we want
+     to use them.
+
+      • Scope - Local vs. Global variables
+      One of the complex issues we had while planning and implementing our program, were Scopes.
+      In a given scope (e.g if condition), we wanted to have access to all upper scope variables.
+      For that, we created a parentScope, and upperScopesVariables list, to follow which variables
+      are defined outside the given scope and be accessed to. In this way, we created a tree which
+      supposed to trace back all the variables from the depth of the current scope to the global scope,
+      and collect all the variables on the way.
+
+       • Variable
+       When creating Variable object, we decided to create two constructors, the first one is the raw and
+       unchecked variable, which we used in order to save a lot of data which is related to variable object.
+       The second one is the finished object, which only allowed to create from the factory.
+
+       • Catching Exceptions
+       In our program, we implemented our errors catching in a way which it is all thrown to the main class,
+       and there it knows which message to print at the end. The IO Exceptions prints 2, and the rest of them
+       that were found
+       during our code scan, prints 1. If our code scanner decided that the code is valid, 0 will be printed.
+
+       • Method
+       We decided to implement an object that represents one method, it holds informative data members.
+       And inside the class Method, after building the object, we create the variables that were found
+       in the signature and confirm its validity.
+
+       • Regular Expressions
+       In this exercise, we used regex for the first time. It saved us a lot of very complex conditions checks.
+       We believe it increased the understandability of our code, by using the patterns and the matchers.
+       It helped us to filter the basic checks of the main reader into specific readers.
+
+
+=============================
+=    Answers to questions   =
+=============================
+• how you handled s-Java code errors in this exercise, and why you chose to do so ?
+    We chose to handle s-Java code errors with Exceptions system.
+    We created inheritance tree of Exceptions, with 6 main super-classes: CommentException,
+    ConditionException, MethodException, ScopeException, TypeException and VariableException.
+    Each of them has sub-classes which give specific exceptions to common type of errors that
+    can be found in the given code. We caught all the exceptions in the main S-javac class,
+    and by that, we print the appropriate and most informative message.
+    We chose to do it because we believe this is the right way to deal with errors,
+    especially when practicing object oriented programming.
+
+• Regex: Why you chose to use them, and what are the downsides of using them
+        compared to other alternatives (if such exist) ?
+    We chose to use it as much as we could, to spare ourself the complex usage of string manipulations.
+    There are case in which we couldn't use it, so we had to use string manipulations, and we saw that it
+    caused more bugs in our code and were very difficult to reflect afterwards.
+    We used it especially while reading lines from the buffer reader and moving forward to specific readers
+    by patterns. The downside of using regex is that once you write an expression and it has one small
+    mistake, it can cause the whole program to fail, in our case. With other alternatives, because it is much
+    more verbal, you can track your mistake easily (but solving it will take much more time).
+
+
+• How would you modify your code to add new types of variables (e.g., float)?
+    We have two object that supports variables' initialization: Variable and Type.
+    The variable object holds all the fields related to the variable: Type (by composition), and booleans
+    that indicates whether its final, global, local, in method etc.
+    The Type object is an abstract class, which multiple types (boolean, int etc) inherits from.
+    We can just add another sub-class like FloatType that inherits Type class.
+    The variable factory creates a variable by the suitable type only if the value matches the type regex.
+    The factory design pattern here, supports the extensibility of the program because we can just
+    add one case to the switch case factory method, and by that we also support the single choice principle
+    of our program. By that, we don't change anything in Variable object, we only allow it to hold (by
+    composition) one more type of Type object.
+
+• Below are three features your program currently does not support. Please select two of
+them, and describe which modifications/extensions you would have to make in your code
+in order to support them.
+
+    We chose to explain about Classes and methods of standard java :
+    First, Classes - The first action would be to add a regex of class pattern, for checking this case.
+    Then, we would add a class which called 'Class' that holds Scope objects (composition).
+    And we would have preform our scan, instead of by methods - by Class object scopes, and therefore our
+    global scope would have been a class scope (holds the variables and methods inside a class as data
+    members).
+    In order to implement that, we would have to change 'ReadLines' to 'ReadClassLines' and scan in first.
+    Then, continue naturally like we did before, by scanning the methods one by one using the variables from
+    upper scopes (in this case, the class scope). In addition, we would have to check whether there are method
+     calls for method in other
+    classes, or variable of other class, and if the classes has modifiers, we would have which variables we
+    can add to UpperScopeVariables in each scope.
+    Secondly, Methods of standard java - We would add an Enum of all the possible java methods, add regexes
+    accordingly. This way, when we scan each line, we add more options of lines which we don't preform any
+    saving of data or such actions, just like we did in BlankLines or CommentLine, in fact, we can add these 2
+    to the Enum and call it: LinesToIgnore.
+    By that, we will except this lines, but preform no analysis and data manipulations. Of course,
+    if this question implies that we would need to process and analyze some if it, we can do that by adding
+    another Reader.
+
+• please describe two of the main regular expressions you used in your code.
+    We chose to describe our Declaration pattern regex, and our Method pattern regex:
+
+    First, Declaration pattern regex - We chose to use non-capturing groups syntax, because
+    we don't use capturing groups in our implementation at all. In our initial 'gate', before
+    calling DeclarationReader, we check that the saved words of a type (String, int etc) has to appear.
+    Furthermore, we check if the word final appears, if it is - it should appear once, at the beginning.
+    We check for the optional comma and equal (followed by any string) symbols, and the mandatory semi-colon
+    symbol.
+    In addition, we support optional white-spaces between any of them, and demand one white space between the
+    type declaration to the name of the variable.
+
+    Secondly, Method pattern regex - Again, we chose to use non-capturing groups syntax, because
+    we don't use capturing groups in our implementation at all. In our initial 'gate', before
+    calling MethodReader, a method pattern needs to be recognised. Because it has a pretty steady pattern
+    which includes a start of 'void' string (optional spaces are legal), after that at least one space
+    (separating the void declaration and the name of method), a legal name of method which is supposed to
+    start with an alphabetical character, opening and closing round brackets '()' with or without content in
+    it and an opening curly bracket to define the start of method body. If it is a method call, there should
+    not be any 'void' predix and the command line should end with a semi comma.
+
+
+
+
